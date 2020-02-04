@@ -1,4 +1,4 @@
-<h1 align='center'>Restaurant Revenue Prediction</h1>
+<h1 align='center'>Household Energy Consumption</h1>
 <br>
 <h3 align='center'>Daniel Baumann</h1>
 <br>
@@ -34,7 +34,7 @@ ________________________________________________________________________________
   * SARIMAX MODELLING
     * Using weather data as an exogenous variable to help with forecasting energy consumption 
   * LSTM Recurrent Neural Networks
-    * Using a look-back of 30 minutes to forecast energy consumption 
+    * Using a look-back of 100 minutes to forecast energy consumption 
 ____________________________________________________________________________________________________________________________
 <h3 align='center'>Project Contents</h3>
 
@@ -57,3 +57,9 @@ ________________________________________________________________________________
 <h3 align='center'>Project Description and Results</h3>
 
 The dataset required extensive cleaning and feature engineering to cater for seasonal factors. I saw that the time of year was very important so I added categorical columns of year, quarter, month, and whether it was a weekday or not. To be precise, it was evident that in colder months, energy consumption was at a substantially higher value, as well as weekend consumption being much higher than weekday consumption. Intuitively these both made sense as energy for heating is required in colder months, and more time being spent at home during the weekdays. 
+
+I began with very basic modelling of energy consumption, using daily averages to predict the next day of consumption. I then compared these averages with weekly average and weekly one year averages and found that using daily averages performed the best. 
+
+As the above forecasting techniques were very simple, I wanted to capture more model complexity by adopting a autoregressive moving average technique. By looking for autocorrelation and partial autocorrelation in the data, it was clear that energy consumption was strongly auto-correlated to several time-lags before, but partial autocorrelation was only relevant for one lag. As this is minute-by-minute data this makes sense, with the last minute likely to capture almost the entirety of future energy consumption. I then began to run a SARIMAX model grid-search which tries to look for the best fit, using RMSE as my evaluation metric. I arrived at a RMSE of 51 kilowatts when resampled over hourly predictions. 
+
+The final model invovled using Long-Short Term Memory neural networks. This method uses a self-defined lookback (of which i used 100 minutes) to make the prediction about the next minute. This undoubtedly performed the best as this model is able to use the last 100 minutes of data to make the prediciton about the next minute. The testing set had a RMSE of 0.26, which resampled over an hour is approximately 15.6 kilowatts. This outperforms the SARIMAX model three-fold. The drawbacks of the model are that it requires a constant influx of data to make minute predictions on energy consumption. This could pose both a problem for data collection as well as dynamic energy supply from energy suppliers. However, with the adoption of smart meters across many households, this type of modelling may be possible now, and certainly in the future. 
